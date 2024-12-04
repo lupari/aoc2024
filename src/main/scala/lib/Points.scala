@@ -11,10 +11,10 @@ object Points:
     def right(n: Int): Point     = Point(x + n, y)
     def below(n: Int): Point     = Point(x, y + n)
     def above(n: Int): Point     = Point(x, y - n)
-    def upright(n: Int): Point   = Point(x + n, y - n)
-    def downright(n: Int): Point = Point(x + n, y + n)
-    def upleft(n: Int): Point    = Point(x - n, y - n)
-    def downleft(n: Int): Point  = Point(x - n, y + n)
+    def upright(n: Int=1): Point   = Point(x + n, y - n)
+    def downright(n: Int=1): Point = Point(x + n, y + n)
+    def upleft(n: Int=1): Point    = Point(x - n, y - n)
+    def downleft(n: Int=1): Point  = Point(x - n, y + n)
     def directions: Seq[Int => Point] =
       Seq(left, right, below, above, upright, downright, upleft, downleft)
     def neighbors: List[Point] =
