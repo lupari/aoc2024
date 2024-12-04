@@ -17,7 +17,6 @@ object Points:
       case 180 | -180 => Point(-x, -y)
       case -90 | 270  => Point(-y, x)
       case _          => this
-
     def manhattan(p: Point = Position.zero): Int = (p.x - x).abs + (p.y - y).abs
     def dist(p1: Point, p2: Point): Int =
       if (p1.x - p2.x).abs == 1 && (p1.y - p2.y).abs == 1 then 1

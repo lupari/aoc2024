@@ -10,26 +10,24 @@ object Day04:
     Source.fromResource("day04.txt").mkString.toList.toGrid.withDefaultValue('.')
 
   def allXmases(): Seq[String] =
-    val r                     = (1 to 3)
-    def horizontal(p: Point)  = (p +: r.map(x => Point(p.x + x, p.y)))
-    def horizontal2(p: Point) = (p +: r.map(x => Point(p.x - x, p.y)))
-    def vertical(p: Point)    = (p +: r.map(y => Point(p.x, p.y + y)))
-    def vertical2(p: Point)   = (p +: r.map(y => Point(p.x, p.y - y)))
-    def diagonal(p: Point)    = (p +: r.map(xy => Point(p.x + xy, p.y + xy)))
-    def diagonal2(p: Point)   = (p +: r.map(xy => Point(p.x - xy, p.y - xy)))
-    def diagonal3(p: Point)   = (p +: r.map(xy => Point(p.x + xy, p.y - xy)))
-    def diagonal4(p: Point)   = (p +: r.map(xy => Point(p.x - xy, p.y + xy)))
+    def h(p: Point)  = (1 to 3).map(x => Point(p.x + x, p.y))
+    def h2(p: Point) = (1 to 3).map(x => Point(p.x - x, p.y))
+    def v(p: Point)  = (1 to 3).map(y => Point(p.x, p.y + y))
+    def v2(p: Point) = (1 to 3).map(y => Point(p.x, p.y - y))
+    def d(p: Point)  = (1 to 3).map(xy => Point(p.x + xy, p.y + xy))
+    def d2(p: Point) = (1 to 3).map(xy => Point(p.x - xy, p.y - xy))
+    def d3(p: Point) = (1 to 3).map(xy => Point(p.x + xy, p.y - xy))
+    def d4(p: Point) = (1 to 3).map(xy => Point(p.x - xy, p.y + xy))
 
-    val dirs =
-      Seq(horizontal, horizontal2, vertical, vertical2, diagonal, diagonal2, diagonal3, diagonal4)
-    grid.keys.toList.flatMap(v => dirs.map(_.apply(v).map(grid(_)).mkString))
+    val dirs = Seq(h, h2, v, v2, d, d2, d3, d4)
+    grid.keys.toList.flatMap(v => dirs.map(d => (v +: d(v)).map(grid(_)).mkString))
 
   def isXmas(p: Point): Boolean =
-    val d1 = List(Point(p.x - 1, p.y - 1), p, Point(p.x + 1, p.y + 1)).map(grid(_)).mkString
-    val d2 = List(Point(p.x + 1, p.y + 1), p, Point(p.x - 1, p.y - 1)).map(grid(_)).mkString
-    val d3 = List(Point(p.x - 1, p.y + 1), p, Point(p.x + 1, p.y - 1)).map(grid(_)).mkString
-    val d4 = List(Point(p.x + 1, p.y - 1), p, Point(p.x - 1, p.y + 1)).map(grid(_)).mkString
-    Seq(d1, d2, d3, d4).count(_ == "MAS") == 2
+    val d1 = Seq(Point(p.x - 1, p.y - 1), p, Point(p.x + 1, p.y + 1))
+    val d2 = Seq(Point(p.x + 1, p.y + 1), p, Point(p.x - 1, p.y - 1))
+    val d3 = Seq(Point(p.x - 1, p.y + 1), p, Point(p.x + 1, p.y - 1))
+    val d4 = Seq(Point(p.x + 1, p.y - 1), p, Point(p.x - 1, p.y + 1))
+    Seq(d1, d2, d3, d4).map(ps => ps.map(p => grid(p)).mkString).count(_ == "MAS") == 2
 
   def partOne(): Int = allXmases().count(_ == "XMAS")
   def partTwo(): Int = grid.keys.count(isXmas)
