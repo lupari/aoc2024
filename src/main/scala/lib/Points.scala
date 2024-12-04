@@ -3,18 +3,18 @@ package lib
 object Points:
 
   case class Point(x: Int, y: Int):
-    def +(p: Point): Point       = Point(x + p.x, y + p.y)
-    def -(p: Point): Point       = Point(x - p.x, y - p.y)
-    def *(n: Int): Point         = Point(x * n, y * n)
-    def <=(p: Point): Boolean    = x <= p.x && y <= p.y
-    def left(n: Int): Point      = Point(x - n, y)
-    def right(n: Int): Point     = Point(x + n, y)
-    def below(n: Int): Point     = Point(x, y + n)
-    def above(n: Int): Point     = Point(x, y - n)
-    def upright(n: Int=1): Point   = Point(x + n, y - n)
-    def downright(n: Int=1): Point = Point(x + n, y + n)
-    def upleft(n: Int=1): Point    = Point(x - n, y - n)
-    def downleft(n: Int=1): Point  = Point(x - n, y + n)
+    def +(p: Point): Point           = Point(x + p.x, y + p.y)
+    def -(p: Point): Point           = Point(x - p.x, y - p.y)
+    def *(n: Int): Point             = Point(x * n, y * n)
+    def <=(p: Point): Boolean        = x <= p.x && y <= p.y
+    def left(n: Int): Point          = Point(x - n, y)
+    def right(n: Int): Point         = Point(x + n, y)
+    def below(n: Int): Point         = Point(x, y + n)
+    def above(n: Int): Point         = Point(x, y - n)
+    def upright(n: Int = 1): Point   = Point(x + n, y - n)
+    def downright(n: Int = 1): Point = Point(x + n, y + n)
+    def upleft(n: Int = 1): Point    = Point(x - n, y - n)
+    def downleft(n: Int = 1): Point  = Point(x - n, y + n)
     def directions: Seq[Int => Point] =
       Seq(left, right, below, above, upright, downright, upleft, downleft)
     def neighbors: List[Point] =
