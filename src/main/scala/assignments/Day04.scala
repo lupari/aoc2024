@@ -15,10 +15,10 @@ object Day04:
     )
 
   def isXmas(p: Point): Boolean =
-    val d1 = Seq(Point(p.upright(), p, p.downleft())
-    val d2 = Seq(Point(p.downleft(), p, p.upright())
-    val d3 = Seq(Point(p.upleft(), p, p.downright())
-    val d4 = Seq(Point(p.downright(), p, p.upleft())
+    val d1 = Seq(p.upright(), p, p.downleft())
+    val d2 = Seq(p.downleft(), p, p.upright())
+    val d3 = Seq(p.upleft(), p, p.downright())
+    val d4 = Seq(p.downright(), p, p.upleft())
     Seq(d1, d2, d3, d4).map(_.map(grid(_)).mkString).count(_ == "MAS") == 2
 
   def partOne(): Int = grid.keys.toList.flatMap(words).count(_ == "XMAS")
