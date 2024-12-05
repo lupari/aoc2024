@@ -44,8 +44,9 @@ object Graphs:
     def apply[A](start: A, goal: A)(cf: (A, A) => Int)(nf: A => Iterable[A])(
         hf: A => Int
     ): (Map[A, Int], Option[(A, Int)]) =
-      val seen: mutable.Map[A, Int]            = mutable.Map.empty
-      val unseen: PriorityQueue[(Int, Int, A)] = PriorityQueue.empty(Ordering.by(-_._1))
+      val seen: mutable.Map[A, Int] = mutable.Map.empty
+      val unseen: mutable.PriorityQueue[(Int, Int, A)] =
+        mutable.PriorityQueue.empty(Ordering.by(-_._1))
       unseen.enqueue((hf(start), 0, start))
       while unseen.nonEmpty do
         val (_, dist, node) = unseen.dequeue()
@@ -90,3 +91,20 @@ object Graphs:
             helper(newVisited, newOpen)
           case None => visited
       helper(Set(start), Queue(start))
+
+  object tsort:
+    def apply[A](nodes: Iterable[A], graph: Map[A, Iterable[A]]): List[A] =
+      def visit(node: A, visited: Set[A], sorted: List[A]): (Set[A], List[A]) =
+        if visited.contains(node) then (visited, sorted)
+        else
+          val dependencies = graph.getOrElse(node, Nil)
+          val (newVisited, newSorted) = dependencies.foldLeft((visited + node, sorted)) {
+            case ((vis, sort), dep) => visit(dep, vis, sort)
+          }
+          (newVisited, node :: newSorted)
+      nodes
+        .foldLeft((Set.empty[A], List.empty[A])) { case ((visited, sorted), node) =>
+          visit(node, visited, sorted)
+        }
+        ._2
+        .reverse
