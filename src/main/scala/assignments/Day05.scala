@@ -14,7 +14,7 @@ object Day05:
   private val orderRegex = """(\d+)\|(\d+)""".r
   def parseOrdering(s: String): Ordering = s match
     case orderRegex(a, b) => (a.toInt, b.toInt)
-  val ordering: Seq[Ordering]       = input.takeWhile(_.exists(_ == '|')).map(parseOrdering)
+  val ordering: Seq[Ordering] = input.takeWhile(_.exists(_ == '|')).map(parseOrdering)
 
   def isOrdered(paging: Paging): Boolean =
     val positions = paging.zipWithIndex.toMap

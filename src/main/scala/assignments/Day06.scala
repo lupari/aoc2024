@@ -8,6 +8,7 @@ object Day06:
   import lib.GridExtensions.*
 
   val grid: Grid[Char] = Source.fromResource("day06.txt").mkString.toList.toGrid
+  val start: Dir       = Dir(grid.find(_._2 == '^').get._1, 'U')
 
   def walk(g: Grid[Char]): Set[Point] =
     @tailrec
@@ -18,7 +19,7 @@ object Day06:
           case Some(n) => helper(acc + dir, if n == '#' then dir.rotate() else dir.forward())
           case _       => (acc + dir).map(_.p)
 
-    helper(Set.empty, Dir(grid.find(_._2 == '^').get._1, 'U'))
+    helper(Set.empty, start)
 
   val path: Set[Point] = walk(grid)
 
