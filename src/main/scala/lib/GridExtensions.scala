@@ -31,6 +31,8 @@ object GridExtensions:
           Option.when(regex.matches(seq))(p)
         else None
       }
+    
+    def has(p: Point): Boolean = grid.keySet.contains(p) 
 
   private def makeGrid[A](input: Seq[Char])(fn: (Char => A)): Grid[A] =
     @tailrec
