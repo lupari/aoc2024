@@ -4,9 +4,11 @@ import scala.annotation.tailrec
 import scala.collection.immutable.Queue
 import scala.collection.mutable
 import scala.collection.mutable.PriorityQueue
+import lib.Points.Position.neighbors
 
 object Graphs:
   object dfs:
+    // provides all nodes accessible from start, does not keep track of paths
     def apply[A](start: A)(nf: A => Iterable[A]): Iterable[A] =
       def _dfs(s: A, seen: Iterable[A]): Iterable[A] =
         if seen.iterator.contains(s) then seen
@@ -15,6 +17,16 @@ object Graphs:
           neighbors.foldLeft(Iterable(s) ++ seen)((b, a) => _dfs(a, b))
 
       _dfs(start, Nil)
+
+    // provides all accessible paths to and end node from start
+    def search[A](start: A)(nf: A => Seq[A])(ef: A => Boolean): Seq[Seq[A]] =
+      def _dfs(p: A, path: Seq[A], visited: Set[A]): Seq[Seq[A]] =
+        if ef(p) then Seq(path)
+        else
+          val neighbors = nf(p).filterNot(visited.contains)
+          neighbors.flatMap(next => _dfs(next, path :+ next, visited + next))
+
+      _dfs(start, Seq(start), Set(start))
 
   object bfs:
     def traverse[A](start: A)(nf: A => Iterable[A]): Map[A, Int] =
