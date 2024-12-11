@@ -20,10 +20,8 @@ object Day11:
   def stoneCount(n: Int): Long =
     val distribution = stones.groupMapReduce(identity)(_ => 1L)(_ + _)
     def blink(d: Map[Long, Long]) =
-      (for {
-        (stone, count) <- d.iterator
-        stone2       <- step(stone)
-      } yield stone2 -> count).toList.groupMapReduce(_._1)(_._2)(_ + _)
+      (for (stone, count) <- d; stone2 <- step(stone)
+      yield stone2 -> count).toList.groupMapReduce(_._1)(_._2)(_ + _)
     Iterator.iterate(distribution)(blink).drop(n).next.values.sum
 
   def partOne(): Long = stoneCount(25)
