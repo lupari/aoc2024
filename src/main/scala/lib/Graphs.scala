@@ -18,13 +18,13 @@ object Graphs:
 
       _dfs(start, Nil)
 
-    // provides all accessible paths to and end node from start
-    def search[A](start: A)(nf: A => Seq[A])(ef: A => Boolean): Seq[Seq[A]] =
+    // provides all accessible paths to an end node from start
+    def search[A](start: A)(next: A => Seq[A])(goal: A => Boolean): Seq[Seq[A]] =
       def _dfs(p: A, path: Seq[A], visited: Set[A]): Seq[Seq[A]] =
-        if ef(p) then Seq(path)
+        if goal(p) then Seq(path)
         else
-          val neighbors = nf(p).filterNot(visited.contains)
-          neighbors.flatMap(next => _dfs(next, path :+ next, visited + next))
+          val neighbors = next(p).filterNot(visited.contains)
+          neighbors.flatMap(n => _dfs(n, path :+ n, visited + n))
 
       _dfs(start, Seq(start), Set(start))
 
