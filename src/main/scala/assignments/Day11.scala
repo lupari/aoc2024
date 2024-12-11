@@ -18,7 +18,7 @@ object Day11:
     else Seq(stone * 2024)
 
   def stoneCount(n: Int): Long =
-    val distribution = stones.groupMapReduce(identity)(_ => 1)(_ + _).view.mapValues(_.toLong).toMap
+    val distribution = stones.groupMapReduce(identity)(_ => 1L)(_ + _)
     def blink(d: Map[Long, Long]) =
       (for {
         (stone, count) <- d.iterator
