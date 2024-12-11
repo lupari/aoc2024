@@ -6,11 +6,13 @@ object Points:
     def +(p: Point): Point           = Point(x + p.x, y + p.y)
     def -(p: Point): Point           = Point(x - p.x, y - p.y)
     def *(n: Int): Point             = Point(x * n, y * n)
+    def !=(p: Point): Boolean        = p.x != x || p.y != y
     def <=(p: Point): Boolean        = x <= p.x && y <= p.y
-    def left(n: Int): Point          = Point(x - n, y)
-    def right(n: Int): Point         = Point(x + n, y)
-    def below(n: Int): Point         = Point(x, y + n)
-    def above(n: Int): Point         = Point(x, y - n)
+    def cross(p: Point): Int         = x * p.y - y * p.x
+    def left(n: Int = 1): Point          = Point(x - n, y)
+    def right(n: Int = 1): Point         = Point(x + n, y)
+    def below(n: Int= 1): Point         = Point(x, y + n)
+    def above(n: Int= 1): Point         = Point(x, y - n)
     def upright(n: Int = 1): Point   = Point(x + n, y - n)
     def downright(n: Int = 1): Point = Point(x + n, y + n)
     def upleft(n: Int = 1): Point    = Point(x - n, y - n)
@@ -20,7 +22,7 @@ object Points:
     def neighbors: List[Point] =
       List(Point(x, y - 1), Point(x + 1, y), Point(x, y + 1), Point(x - 1, y))
     def corners: List[Point] =
-      List(Point(x - 1, y - 1), Point(x + 1, y - 1), Point(x - 1, y + 1), Point(x + 1, y + 1))
+      List(Point(x - 1, y - 1), Point(x - 1, y + 1), Point(x + 1, y - 1), Point(x + 1, y + 1))
     def surroundings: List[Point] = neighbors ++ corners
     def rotate(deg: Int): Point = deg % 360 match
       case 90 | -270  => Point(y, -x)

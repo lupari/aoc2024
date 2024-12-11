@@ -92,12 +92,12 @@ object Graphs:
       (seen.toMap, None)
 
   object floodfill:
-    def apply[A](start: A, nf: A => Set[A])(ff: A => Boolean): Set[A] =
+    def apply[A](start: A, nf: A => Iterable[A])(ff: A => Boolean): Set[A] =
       @tailrec
       def helper(visited: Set[A], open: Queue[A]): Set[A] =
         open.dequeueOption match
           case Some((current, open)) =>
-            val neighbors  = nf(current).filter(ff) -- visited - current
+            val neighbors  = nf(current).filter(ff).toSet -- visited - current
             val newVisited = visited ++ neighbors
             val newOpen    = open.enqueueAll(neighbors)
             helper(newVisited, newOpen)
