@@ -14,7 +14,7 @@ object Day13:
 
   extension (n: Long)
     @targetName("divmod")
-    def %/(d: Long) = if n % d == 0 then Some(n / d) else None
+    def /%(d: Long) = if n % d == 0 then Some(n / d) else None
 
   def parseMachine(ls: List[String]): Machine =
     val regex = """.*?(\d+)\D+(\d+)""".r
@@ -26,8 +26,8 @@ object Day13:
 
   def prizeCost(m: Machine): Option[Long] =
     for
-      t1 <- (m.prize.x * m.a.y - m.prize.y * m.a.x) %/ (m.b.x * m.a.y - m.b.y * m.a.x)
-      t2 <- (m.prize.x - t1 * m.b.x) %/ m.a.x
+      t1 <- (m.prize.x * m.a.y - m.prize.y * m.a.x) /% (m.b.x * m.a.y - m.b.y * m.a.x)
+      t2 <- (m.prize.x - t1 * m.b.x) /% m.a.x
     yield 3 * t2 + t1
 
   val machines1: Seq[Machine] = input.map(parseMachine)
