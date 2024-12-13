@@ -24,7 +24,7 @@ object Day13:
       case regex(a, b) => PointL(a.toLong, b.toLong)
     Machine(parse(ls.head), parse(ls.tail.head), parsePrize(ls.last))
 
-  def getPrize(m: Machine): Option[Long] =
+  def prizeCost(m: Machine): Option[Long] =
     for
       t1 <- (m.prize.x * m.a.y - m.prize.y * m.a.x) %/ (m.b.x * m.a.y - m.b.y * m.a.x)
       t2 <- (m.prize.x - t1 * m.b.x) %/ m.a.x
@@ -36,5 +36,5 @@ object Day13:
     m.copy(prize = prize)
   )
 
-  def partOne(): Long = machines1.flatMap(getPrize).sum
-  def partTwo(): Long = machines2.flatMap(getPrize).sum
+  def partOne(): Long = machines1.flatMap(prizeCost).sum
+  def partTwo(): Long = machines2.flatMap(prizeCost).sum
