@@ -14,7 +14,7 @@ object Day13:
 
   extension (n: Long)
     @targetName("divmod")
-    def %/(d: Long): Option[Long] = if (n % d == 0) Some(n / d) else None
+    def %/(d: Long) = if n % d == 0 then Some(n / d) else None
 
   def parseMachine(ls: List[String]): Machine =
     val regex = """.*?(\d+)\D+(\d+)""".r
