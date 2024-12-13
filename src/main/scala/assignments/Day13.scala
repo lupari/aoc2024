@@ -5,7 +5,6 @@ import scala.io.Source
 
 object Day13:
 
-  val input = Source.fromResource("day13.txt").getLines.filterNot(_.isBlank).grouped(3).toList
   case class Point(x: Long, y: Long)
   case class Machine(a: Point, b: Point, prize: Point)
 
@@ -24,6 +23,7 @@ object Day13:
       a <- (m.prize.x - b * m.b.x) /% m.a.x
     yield 3 * a + b
 
+  val input = Source.fromResource("day13.txt").getLines.filterNot(_.isBlank).grouped(3).toList
   val machines1: Seq[Machine] = input.map(parseMachine)
   lazy val machines2: Seq[Machine] = machines1.map(m =>
     val prize = Point(m.prize.x + 10000000000000L, m.prize.y + 10000000000000L)
