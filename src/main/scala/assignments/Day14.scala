@@ -24,4 +24,4 @@ object Day14:
 
   def partTwo(): Int =
     val it = Iterator.iterate(robots)(_.map(_.move)).zipWithIndex
-    it.find(_._1.groupMapReduce(_.pos)(_ => 1)(_ + _).values.forall(_ <= 1)).get._2
+    it.find(_._1.groupMapReduce(_.pos)(_ => 1)(_ + _).values.forall(_ < 2)).get._2
