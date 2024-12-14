@@ -53,24 +53,29 @@ object Graphs:
       _search(List(start), Map(start -> 0))
 
   object aStar:
-    def apply[A](start: A, goal: A)(cf: (A, A) => Int)(nf: A => Iterable[A])(
-        hf: A => Int
-    ): (Map[A, Int], Option[(A, Int)]) =
-      val seen: mutable.Map[A, Int] = mutable.Map.empty
-      val unseen: mutable.PriorityQueue[(Int, Int, A)] =
-        mutable.PriorityQueue.empty(Ordering.by(-_._1))
-      unseen.enqueue((hf(start), 0, start))
-      while unseen.nonEmpty do
-        val (_, dist, node) = unseen.dequeue()
-        if !seen.contains(node) then
-          seen(node) = dist
-          if node == goal then return (seen.toMap, Some(node -> dist))
-          else
-            def visit(n: A, d: Int) =
-              if !seen.contains(n) then unseen.enqueue((dist + d + hf(n), dist + d, n))
-            nf(node).map(n => (n, cf(node, n))).foreach(n => visit(n._1, n._2))
+    def apply[A](start: A, goal: A)(nf: A => Set[(A, Int)])(hf: A => Long): Option[Long] =
+      case class Node(point: A, cost: Long, estimatedTotalCost: Long)
+      val priorityQueue = mutable.PriorityQueue.empty[Node](Ordering.by(-_.estimatedTotalCost))
+      priorityQueue.enqueue(Node(start, 0, hf(start)))
 
-      (seen.toMap, None)
+      val visited = collection.mutable.Set.empty[A]
+
+      while (priorityQueue.nonEmpty)
+        val current = priorityQueue.dequeue()
+        if current.point == goal then return Some(current.cost)
+
+        if !visited.contains(current.point) then
+          visited.add(current.point)
+
+          val neighbors = nf(current.point).map(n => Node(n._1, current.cost + n._2, 0))
+          neighbors.foreach { neighbor =>
+            if !visited.contains(neighbor.point) then
+              val totalCost = neighbor.cost + hf(neighbor.point)
+              priorityQueue.enqueue(neighbor.copy(estimatedTotalCost = totalCost))
+          }
+        
+      // If we exhaust the queue and don't find the goal, it's unreachable
+      None
 
   object dijkstra:
     def apply[A](start: A, goal: A)(nf: A => Iterable[A])(

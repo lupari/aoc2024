@@ -4,12 +4,9 @@ import scala.annotation.targetName
 import scala.io.Source
 
 object Day13:
-
+  import lib.NumberExtensions.*
   case class Point(x: Long, y: Long)
   case class Machine(a: Point, b: Point, prize: Point)
-
-  extension (n: Long)
-    @targetName("safediv") def /%(d: Long) = if n % d == 0 then Some(n / d) else None
 
   def parseMachine(ls: Seq[String]): Machine =
     val regex = """.*?(\d+)\D+(\d+)""".r
