@@ -13,7 +13,7 @@ object Day14:
 
   def parse(s: String): Robot = s match
     case s"p=$px,$py v=$vx,$vy" => Robot(Point(px.toInt, py.toInt), Point(vx.toInt, vy.toInt))
-  val robots: Seq[Robot] = Source.fromResource("day14.txt").getLines().toList.map(parse)
+  val robots: Seq[Robot] = Source.fromResource("day14.txt").getLines.toList.map(parse)
 
   def partOne(): Int =
     val moved                = Iterator.iterate(robots)(_.map(_.move)).drop(100).next
