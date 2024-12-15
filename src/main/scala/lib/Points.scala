@@ -9,10 +9,10 @@ object Points:
     def !=(p: Point): Boolean        = p.x != x || p.y != y
     def <=(p: Point): Boolean        = x <= p.x && y <= p.y
     def cross(p: Point): Int         = x * p.y - y * p.x
-    def left(n: Int = 1): Point          = Point(x - n, y)
-    def right(n: Int = 1): Point         = Point(x + n, y)
-    def below(n: Int= 1): Point         = Point(x, y + n)
-    def above(n: Int= 1): Point         = Point(x, y - n)
+    def left(n: Int = 1): Point      = Point(x - n, y)
+    def right(n: Int = 1): Point     = Point(x + n, y)
+    def below(n: Int = 1): Point     = Point(x, y + n)
+    def above(n: Int = 1): Point     = Point(x, y - n)
     def upright(n: Int = 1): Point   = Point(x + n, y - n)
     def downright(n: Int = 1): Point = Point(x + n, y + n)
     def upleft(n: Int = 1): Point    = Point(x - n, y - n)
@@ -50,11 +50,24 @@ object Points:
       (0 to max).map(i => Point(p1.x + dx * i, p1.y + dy * i))
 
   object Position:
-    val zero: Point                  = Point(0, 0)
-    val neighbors: List[Point]       = List(Point(1, 0), Point(-1, 0), Point(0, 1), Point(0, -1))
-    val corners: List[Point]         = List(Point(1, 1), Point(-1, 1), Point(1, -1), Point(-1, -1))
-    val surroundings: List[Point]    = neighbors ++ corners
-    val directions: Map[Char, Point] = List('E', 'W', 'N', 'S').zip(neighbors).toMap
+    val zero: Point               = Point(0, 0)
+    val neighbors: List[Point]    = List(Point(1, 0), Point(-1, 0), Point(0, 1), Point(0, -1))
+    val corners: List[Point]      = List(Point(1, 1), Point(-1, 1), Point(1, -1), Point(-1, -1))
+    val surroundings: List[Point] = neighbors ++ corners
+    def directions: Map[Char, Point] = Map(
+      'E' -> Point(1, 0),
+      '>' -> Point(1, 0),
+      'R' -> Point(1, 0),
+      'W' -> Point(-1, 0),
+      '<' -> Point(-1, 0),
+      'L' -> Point(-1, 0),
+      'N' -> Point(0, -1),
+      'U' -> Point(0, -1),
+      '^' -> Point(0, -1),
+      'D' -> Point(0, 1),
+      'S' -> Point(0, 1),
+      'v' -> Point(0, 1)
+    )
 
   case class Dir(p: Point, dir: Char):
     def forward(n: Int = 1): Dir = dir match
