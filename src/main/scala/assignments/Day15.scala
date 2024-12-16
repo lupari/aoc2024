@@ -35,10 +35,7 @@ object Day15:
         case block @ ('[' | ']') if dir.y == 0 =>
           val pos2 = pos + dir
           for g2 <- helper(acc, pos2)
-          yield g2
-            .updated(pos2, block)
-            .updated(pos, '.')
-        case _ => throw new IllegalArgumentException()
+          yield g2.updated(pos2, block).updated(pos, '.')
 
     val robot2 = robot + dir
     helper(g, robot2) match
@@ -56,12 +53,13 @@ object Day15:
   def partOne(): Int = coordinateSum(grid, 'O')(move1)
 
   def partTwo(): Int =
-    def expandGrid(g: Grid[Char]): Grid[Char] =
-      def transform(c: Char): Seq[Char] = c match
-        case 'O' => Seq('[', ']')
-        case '@' => Seq('@', '.')
-        case _   => Seq(c, c)
+    def transform(c: Char): Seq[Char] = c match
+      case 'O' => Seq('[', ']')
+      case '@' => Seq('@', '.')
+      case _   => Seq(c, c)
 
-      g.flatMap((p, c) => transform(c).zipWithIndex.map((c2, i) => p.copy(x = p.x * 2 + i) -> c2))
+    val g2 = grid.flatMap((k, v) =>
+      transform(v).zipWithIndex.map((v2, i) => k.copy(x = k.x * 2 + i) -> v2)
+    )
 
-    coordinateSum(expandGrid(grid), '[')(move2)
+    coordinateSum(g2, '[')(move2)

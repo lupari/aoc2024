@@ -59,55 +59,53 @@ object Graphs:
       priorityQueue.enqueue(Node(start, 0, hf(start)))
 
       val visited = collection.mutable.Set.empty[A]
+      val bestCosts = mutable.Map[A, Long](start -> 0)
 
       while (priorityQueue.nonEmpty)
         val current = priorityQueue.dequeue()
         if current.point == goal then return Some(current.cost)
-
-        if !visited.contains(current.point) then
-          visited.add(current.point)
-
-          val neighbors = nf(current.point).map(n => Node(n._1, current.cost + n._2, 0))
-          neighbors.foreach { neighbor =>
-            if !visited.contains(neighbor.point) then
-              val totalCost = neighbor.cost + hf(neighbor.point)
-              priorityQueue.enqueue(neighbor.copy(estimatedTotalCost = totalCost))
-          }
-        
-      // If we exhaust the queue and don't find the goal, it's unreachable
+        nf(current.point).foreach { case (neighbor, moveCost) => 
+          val newCost = current.cost + moveCost
+          if newCost < bestCosts.getOrElse(neighbor, Long.MaxValue) then
+            bestCosts(neighbor) = newCost
+            val estimatedTotalCost = newCost + hf(neighbor)
+            priorityQueue.enqueue(Node(neighbor, newCost, estimatedTotalCost))  
+        }
       None
 
   object dijkstra:
-    def apply[A](start: A, goal: A)(nf: A => Iterable[A])(
-        cf: (A, A) => Int
-    ): (Map[A, Int], Option[(A, Int)]) =
-      val seen: mutable.Map[A, Int]       = mutable.Map.empty
-      val unseen: PriorityQueue[(Int, A)] = PriorityQueue.empty(Ordering.by(-_._1))
-      unseen.enqueue((0, start))
+    def search[A](start: A)(nf: A => Set[(A, Int)])(ef: A => Boolean): (Map[A, Int], Option[(A, Int)]) =
+      val distances = mutable.Map[A, Int](start -> 0)
+      val unseen = PriorityQueue((0, start))(Ordering.by(-_._1))
+      val visited = mutable.Set.empty[A]
       while unseen.nonEmpty do
-        val (dist, node) = unseen.dequeue()
-        if !seen.contains(node) then
-          seen(node) = dist
-          if node == goal then return (seen.toMap, Some(node -> dist))
-          else
-            def visit(n: A, d: Int) =
-              if !seen.contains(n) then unseen.enqueue((dist + d, n))
-            nf(node).map(n => (n, cf(node, n))).foreach(n => visit(n._1, n._2))
+        val (currentDist, currentNode) = unseen.dequeue()
+        if !visited.contains(currentNode) then
+          visited.add(currentNode)
+          if ef(currentNode) then return (distances.toMap, Some(currentNode -> currentDist))
+          // Process neighbors
+          for (neighbor, weight) <- nf(currentNode) do
+            val newDist = currentDist + weight
+            if newDist < distances.getOrElse(neighbor, Int.MaxValue) then
+              distances(neighbor) = newDist
+              unseen.enqueue((newDist, neighbor))
 
-      (seen.toMap, None)
+      (distances.toMap, None)
 
   object floodfill:
     def apply[A](start: A, nf: A => Iterable[A])(ff: A => Boolean): Set[A] =
-      @tailrec
-      def helper(visited: Set[A], open: Queue[A]): Set[A] =
-        open.dequeueOption match
-          case Some((current, open)) =>
-            val neighbors  = nf(current).filter(ff).toSet -- visited - current
-            val newVisited = visited ++ neighbors
-            val newOpen    = open.enqueueAll(neighbors)
-            helper(newVisited, newOpen)
-          case None => visited
-      helper(Set(start), Queue(start))
+      if !ff(start) then Set.empty
+      else
+        @tailrec
+        def helper(visited: Set[A], open: Queue[A]): Set[A] =
+          open.dequeueOption match
+            case Some((current, open)) =>
+              val neighbors  = nf(current).filter(ff).toSet -- visited
+              val newVisited = visited ++ neighbors
+              val newOpen    = open.enqueueAll(neighbors)
+              helper(newVisited, newOpen)
+            case None => visited
+        helper(Set(start), Queue(start))
 
   object tsort:
     def apply[A](nodes: Iterable[A], graph: Map[A, Iterable[A]]): List[A] =
