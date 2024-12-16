@@ -3,7 +3,6 @@ package assignments
 import scala.io.Source
 import lib.Points.Point
 import lib.Graphs
-import lib.GridExtensions.Grid
 
 object Day16:
   import lib.GridExtensions.*
@@ -24,7 +23,7 @@ object Day16:
   val start: Reindeer  = Reindeer(grid.find(_._2 == 'S').get._1, Point(1, 0))
   val end: Point       = grid.find(_._2 == 'E').get._1
   val result: (Map[Reindeer, Int], Option[(Reindeer, Int)]) =
-     Graphs.dijkstra.search(start)(neighbors(_))(_.pos == end)
+    Graphs.dijkstra(start)(neighbors(_))(_.pos == end)
 
   def partOne(): Int = result._2.get._2
   def partTwo(): Int =

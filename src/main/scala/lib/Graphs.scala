@@ -47,7 +47,7 @@ object Graphs:
         case h :: t if ef(h) => Some(cost(h))
         case h :: t =>
           val neighbors = nf(h).filterNot(cost.contains)
-          _search(t ++ neighbors, cost ++ neighbors.map(n => (n -> (cost(h) + 1))))
+          _search(t ++ neighbors, cost ++ neighbors.map(n => n -> (cost(h) + 1)))
         case _ => None
 
       _search(List(start), Map(start -> 0))
@@ -58,32 +58,33 @@ object Graphs:
       val priorityQueue = mutable.PriorityQueue.empty[Node](Ordering.by(-_.estimatedTotalCost))
       priorityQueue.enqueue(Node(start, 0, hf(start)))
 
-      val visited = collection.mutable.Set.empty[A]
+      val visited   = collection.mutable.Set.empty[A]
       val bestCosts = mutable.Map[A, Long](start -> 0)
 
-      while (priorityQueue.nonEmpty)
+      while priorityQueue.nonEmpty do
         val current = priorityQueue.dequeue()
         if current.point == goal then return Some(current.cost)
-        nf(current.point).foreach { case (neighbor, moveCost) => 
+        nf(current.point).foreach { case (neighbor, moveCost) =>
           val newCost = current.cost + moveCost
           if newCost < bestCosts.getOrElse(neighbor, Long.MaxValue) then
             bestCosts(neighbor) = newCost
             val estimatedTotalCost = newCost + hf(neighbor)
-            priorityQueue.enqueue(Node(neighbor, newCost, estimatedTotalCost))  
+            priorityQueue.enqueue(Node(neighbor, newCost, estimatedTotalCost))
         }
       None
 
   object dijkstra:
-    def search[A](start: A)(nf: A => Set[(A, Int)])(ef: A => Boolean): (Map[A, Int], Option[(A, Int)]) =
+    def apply[A](start: A)(nf: A => Set[(A, Int)])(
+        ef: A => Boolean
+    ): (Map[A, Int], Option[(A, Int)]) =
       val distances = mutable.Map[A, Int](start -> 0)
-      val unseen = PriorityQueue((0, start))(Ordering.by(-_._1))
-      val visited = mutable.Set.empty[A]
+      val unseen    = mutable.PriorityQueue((0, start))(Ordering.by(-_._1))
+      val visited   = mutable.Set.empty[A]
       while unseen.nonEmpty do
         val (currentDist, currentNode) = unseen.dequeue()
         if !visited.contains(currentNode) then
           visited.add(currentNode)
           if ef(currentNode) then return (distances.toMap, Some(currentNode -> currentDist))
-          // Process neighbors
           for (neighbor, weight) <- nf(currentNode) do
             val newDist = currentDist + weight
             if newDist < distances.getOrElse(neighbor, Int.MaxValue) then
