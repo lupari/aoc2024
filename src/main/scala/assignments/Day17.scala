@@ -34,7 +34,6 @@ object Day17:
         helper(ptr2, rs2, acc ++ out.toList)
     helper(0, regs, Nil)
 
-  @tailrec
   def findA(ptr: Int, acc: Long): Option[Long] =
     def helper(candidate: Int): Option[Long] =
       val acc2 = acc * 8 + candidate
