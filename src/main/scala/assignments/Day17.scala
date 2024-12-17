@@ -24,7 +24,7 @@ object Day17:
     case 6 => (ptr + 2, None, rs.copy(b = rs.a >> combo(op, rs)))
     case _ => (ptr + 2, None, rs.copy(c = rs.a >> combo(op, rs)))
 
-  def run(program: List[Int], regs: Registry): List[Long] =
+  def run(regs: Registry): List[Long] =
     @tailrec
     def helper(ptr: Int, rs: Registry, acc: List[Long]): List[Long] =
       if ptr + 1 >= program.length then acc
@@ -34,15 +34,15 @@ object Day17:
         helper(ptr2, rs2, acc ++ out.toList)
     helper(0, regs, Nil)
 
-  def findA(program: List[Int], ptr: Int, acc: Long): Option[Long] =
+  def findA(ptr: Int, acc: Long): Option[Long] =
     def helper(candidate: Int): Option[Long] =
       val acc2 = acc * 8 + candidate
-      if run(program, Registry(acc2)) == program.drop(ptr) then
+      if run(Registry(acc2)) == program.drop(ptr) then
         if ptr == 0 then Some(acc2)
-        else findA(program, ptr - 1, acc2)
+        else findA(ptr - 1, acc2)
       else None
 
     (0 until 8).toList.map(helper).collectFirst { case Some(a) => a }
 
-  def partOne(): String = run(program, Registry(input.head.filter(_.isDigit).toLong)).mkString(",")
-  def partTwo(): Long   = findA(program, program.length - 1, 0L).get
+  def partOne(): String = run(Registry(input.head.filter(_.isDigit).toLong)).mkString(",")
+  def partTwo(): Long   = findA(program.length - 1, 0L).get
