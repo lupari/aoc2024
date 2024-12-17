@@ -17,7 +17,7 @@ object Day16:
       else reindeer.copy(pos = reindeer.pos - reindeer.dir)        -> 1,
       reindeer.copy(dir = right(reindeer.dir)) -> 1000,
       reindeer.copy(dir = left(reindeer.dir))  -> 1000
-    ).filterNot { case (r, _) => grid(r.pos) == '#' }
+    ).filterNot((r, _) => grid(r.pos) == '#')
 
   val grid: Grid[Char] = Source.fromResource("day16.txt").mkString.toList.toGrid
   val start: Reindeer  = Reindeer(grid.find(_._2 == 'S').get._1, Point(1, 0))
@@ -28,14 +28,13 @@ object Day16:
   def partOne(): Int = result._2.get._2
   def partTwo(): Int =
     def helper(reindeer: Reindeer): Set[Point] =
-      def nfb = neighbors(_, fwd = false)
       if reindeer == start then Set(reindeer.pos)
       else
         val distance = result._1(reindeer)
         val paths = for
-          (r, cost) <- nfb(reindeer)
+          (r, cost) <- neighbors(reindeer, fwd = false)
           d         <- result._1.get(r)
-          if d + cost == distance
+          if d + cost == distance // equally good path
         yield helper(r) + reindeer.pos
         paths.foldLeft(Set.empty)(_ ++ _)
 
