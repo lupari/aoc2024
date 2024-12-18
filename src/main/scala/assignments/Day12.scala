@@ -13,7 +13,7 @@ object Day12:
 
   def perimeter(region: Region): Seq[(Point, Point)] =
     def boundaries(p: Point): Set[(Point, Point)] =
-      Set((p.above(), p), (p.left(), p), (p, p.right()))
+      Set((p.above(), p), (p, p.below()), (p.left(), p), (p, p.right()))
     val pairs = region.toList.flatMap(boundaries)
     pairs.groupMapReduce(identity)(_ => 1)(_ + _).toList.filter(_._2 == 1).map(_._1)
 
