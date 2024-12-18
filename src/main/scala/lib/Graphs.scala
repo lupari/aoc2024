@@ -4,7 +4,6 @@ import scala.annotation.tailrec
 import scala.collection.immutable.Queue
 import scala.collection.mutable
 import scala.collection.mutable.PriorityQueue
-import lib.Points.Position.neighbors
 
 object Graphs:
   object dfs:
