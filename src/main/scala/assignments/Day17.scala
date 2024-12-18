@@ -1,7 +1,7 @@
 package assignments
 
-import scala.io.Source
 import scala.annotation.tailrec
+import scala.io.Source
 
 object Day17:
   val input: List[String] = Source.fromResource("day17.txt").getLines.toList
