@@ -12,14 +12,13 @@ object Day19:
     val memo = collection.mutable.Map.empty[Int, Long]
     def helper(i: Int): Long =
       memo.getOrElseUpdate(
-        i, {
+        i, 
           if i == design.size then 1
           else
             (for
               pattern <- patterns
               if design.startsWith(pattern, i)
             yield helper(i + pattern.size)).sum
-        }
       )
 
     helper(0)
