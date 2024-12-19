@@ -8,23 +8,21 @@ object Day19:
   val patterns: List[String] = input.head.split(", ").toList
   val designs: List[String]  = input.drop(2)
 
-  def countWays(design: String): Long =
+  def waysToMakeDesign(design: String): Long =
     val memo = collection.mutable.Map.empty[Int, Long]
     def helper(i: Int): Long =
-      memo.getOrElseUpdate(
-        i, {
-          if i == design.size then 1
-          else
-            (for
-              pattern <- patterns
-              if design.startsWith(pattern, i)
-            yield helper(i + pattern.size)).sum
-        }
-      )
+      lazy val next =
+        if i == design.length then 1
+        else
+          (for
+            pattern <- patterns
+            if design.startsWith(pattern, i)
+          yield helper(i + pattern.length)).sum
+      memo.getOrElseUpdate(i, next)
 
     helper(0)
 
-  val ways: List[Long] = designs.map(countWays)
+  val ways: List[Long] = designs.map(waysToMakeDesign)
 
   def partOne(): Int  = ways.count(_ > 0)
   def partTwo(): Long = ways.sum
