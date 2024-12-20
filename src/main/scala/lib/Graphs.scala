@@ -31,25 +31,38 @@ object Graphs:
     def traverse[A](start: A)(nf: A => Iterable[A]): Map[A, Int] =
       @tailrec
       def _traverse(seen: Map[A, Int], unseen: Map[A, Int]): Map[A, Int] =
-        val neighbors = for {
-          (node, cost) <- unseen; newNode <- nf(node)
-        } yield newNode -> (cost + 1)
-        val seen2   = seen ++ unseen
-        val unseen2 = neighbors.filterNot(n => seen.contains(n._1))
+        val neighbors = for (node, cost) <- unseen; newNode <- nf(node) yield newNode -> (cost + 1)
+        val seen2     = seen ++ unseen
+        val unseen2   = neighbors.filterNot(n => seen.contains(n._1))
         if unseen2.isEmpty then seen2 else _traverse(seen2, unseen2)
 
       _traverse(Map.empty, Map(start -> 0))
 
-    def search[A](start: A)(nf: A => Iterable[A])(ef: A => Boolean): Option[Int] =
+    def search[A](start: A)(nf: A => Iterable[A])(ef: A => Boolean): Option[(Int, List[A])] =
       @tailrec
-      def _search(unseen: Iterable[A], cost: Map[A, Int]): Option[Int] = unseen match
-        case h :: t if ef(h) => Some(cost(h))
+      def _search(
+          unseen: Iterable[A],
+          cost: Map[A, Int],
+          predecessors: Map[A, A]
+      ): Option[(Int, List[A])] = unseen match
+        case h :: t if ef(h) =>
+          // Reconstruct the path by backtracking from the end node
+          val path = Iterator
+            .iterate(h)(predecessors)
+            .takeWhile(predecessors.contains)
+            .toList
+            .reverse :+ h
+          Some(cost(h), start +: path)
         case h :: t =>
           val neighbors = nf(h).filterNot(cost.contains)
-          _search(t ++ neighbors, cost ++ neighbors.map(n => n -> (cost(h) + 1)))
+          _search(
+            t ++ neighbors,
+            cost ++ neighbors.map(n => n -> (cost(h) + 1)),
+            predecessors ++ neighbors.map(n => n -> h)
+          )
         case _ => None
 
-      _search(List(start), Map(start -> 0))
+      _search(List(start), Map(start -> 0), Map.empty)
 
   object aStar:
     def apply[A](start: A, goal: A)(nf: A => Set[(A, Int)])(hf: A => Long): Option[Long] =

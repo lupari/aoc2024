@@ -8,6 +8,7 @@ object Points:
     def *(n: Int): Point             = Point(x * n, y * n)
     def !=(p: Point): Boolean        = p.x != x || p.y != y
     def <=(p: Point): Boolean        = x <= p.x && y <= p.y
+    def >=(p: Point): Boolean        = x >= p.x && y >= p.y
     def <=>(p: Point): Boolean       = x >= 0 && y>=0 && this <= p
     def cross(p: Point): Int         = x * p.y - y * p.x
     def left(n: Int = 1): Point      = Point(x - n, y)
@@ -40,7 +41,7 @@ object Points:
       case Point(x2, y2) if y2 == y && x2 < x => 'W'
       case Point(x2, y2) if y2 == y && x2 > x => 'E'
       case _ => throw new IllegalArgumentException("Points are equal")
-    override def toString = s"$x,$y"  
+    def mkString = s"$x,$y"  
 
   object Point:
     val zero: Point = Point(0, 0)
