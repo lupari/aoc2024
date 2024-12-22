@@ -25,7 +25,7 @@ object Day21:
         .groupMapReduce(identity)(_ => 1L)(_ + _)
 
     val initial = numPaths.map(np => Map(np -> 1L))
-    val pad     = " ^A\n<v>".toGrid
+    val pad     = " ^A\n<v>".toGrid(!_.isWhitespace)
     Iterator
       .iterate(initial)(acc =>
         acc.map(_.foldLeft(Map.empty[String, Long]) { case (newPath, (path, i)) =>
@@ -39,15 +39,12 @@ object Day21:
       .next
 
   def solve(n: Int): Long =
-    def digitPath(path: String) =
-      val pad = "789\n456\n123\n 0A".toGrid
+    def digits(path: String) =
+      val pad = "789\n456\n123\n 0A".toGrid(!_.isWhitespace)
       path.foldLeft(("A", "")) { case ((p, acc), c) => (c.toString, acc + step(p.head, c, pad)) }._2
-    def seqLength(seq: Map[String, Long]) = seq.map((k, v) => k.length * v).sum
+    def length(seq: Map[String, Long]) = seq.map((k, v) => k.length * v).sum
 
-    sequences(codes.map(digitPath), n)
-      .zip(codes)
-      .map((seq, code) => seqLength(seq) * code.init.toInt)
-      .sum
+    sequences(codes.map(digits), n).zip(codes).map((seq, code) => length(seq) * code.init.toInt).sum
 
   def partOne(): Long = solve(n = 2)
   def partTwo(): Long = solve(n = 25)
