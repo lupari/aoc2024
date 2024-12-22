@@ -11,6 +11,7 @@ object GridExtensions:
   type Grid[A] = Map[Point, A]
 
   extension [A](grid: Grid[A])
+    def keyOf(v: A): Point = grid.find(_._2 == v).get._1
     def canvas(default: A)(cf: A => A)(using classTag: ClassTag[A]): Array[Array[A]] =
       val (x, y) = (grid.keys.maxBy(_.x).x, grid.keys.maxBy(_.y).y)
       val canvas = Array.tabulate(y + 1, x + 1)((_, _) => default)
