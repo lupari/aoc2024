@@ -136,3 +136,32 @@ object Graphs:
         }
         ._2
         .reverse
+
+  object bronKerbosch:
+    def apply[A](adjacency: Map[A, Set[A]]): Set[Set[A]] =
+
+      // Select a pivot from the union of P and X to minimize branching
+      def selectPivot(P: Set[A], X: Set[A]): A =
+        // Find the vertex in P ∪ X that has the most neighbors in P
+        (P ++ X).maxBy(v => adjacency.getOrElse(v, Set()).intersect(P).size)
+
+      def helper(R: Set[A], P: Set[A], X: Set[A], cliques: Set[Set[A]]): Set[Set[A]] =
+        // If P and X are both empty, R is a maximal clique
+        if P.isEmpty && X.isEmpty then cliques + R
+        else
+          // Select a pivot (to minimize branching)
+          val pivot = selectPivot(P, X)
+
+          // Iterate over the set of potential candidates P \ {pivot's neighbors}
+          val newP = P -- adjacency(pivot)
+          newP.foldLeft(cliques) { (cliquesAcc, v) =>
+            // Recurse with updated sets
+            val newR = R + v
+            val newP = P.intersect(adjacency(v))
+            val newX = X.intersect(adjacency(v))
+
+            // Recurse with the updated sets and add new cliques
+            helper(newR, newP, newX, cliquesAcc) ++ cliquesAcc
+          }
+
+      helper(Set(), adjacency.keySet, Set(), Set())
