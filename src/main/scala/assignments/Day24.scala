@@ -2,27 +2,20 @@ package assignments
 
 import scala.annotation.tailrec
 import scala.io.Source
-import lib.Numbers.bin2dec
+import lib.Numbers
 
 object Day24:
-  enum Op:
-    case AND, OR, XOR
-  case class Gate(a: String, b: String, op: Op, out: String):
-    def eval(input1: Int, input2: Int): Int =
-      op match
-        case Op.AND => if input1 == 1 && input2 == 1 then 1 else 0
-        case Op.OR  => if input1 == 1 || input2 == 1 then 1 else 0
-        case Op.XOR => if input1 != input2 then 1 else 0
+  case class Gate(a: String, b: String, op: String, out: String):
+    def eval(i1: Int, i2: Int): Int = op match
+      case "AND" => i1 & i2
+      case "OR"  => i1 | i2
+      case "XOR" => i1 ^ i2
 
   def parseInput(l: String): (String, Int) = l match
     case s"${k}: $v" => k -> v.toInt
 
   def parseGate(l: String): Gate = l match
-    case s"$a $t $b -> $o" =>
-      t match
-        case "AND" => Gate(a, b, Op.AND, o)
-        case "OR"  => Gate(a, b, Op.OR, o)
-        case _     => Gate(a, b, Op.XOR, o)
+    case s"$a $op $b -> $out" => Gate(a, b, op, out)
 
   def simulate(wires: Map[String, Int], gates: List[Gate]): Map[String, Int] =
     @tailrec
@@ -44,6 +37,6 @@ object Day24:
 
   def partOne(): Long =
     val zs = simulate(wiring, gates).filter(_._1.head == 'z').toSeq
-    bin2dec(zs.sorted.map(_._2).reverse.mkString)
+    Numbers.bin2dec(zs.sorted.map(_._2).reverse.mkString)
 
 //def partTwo(): Int = 0
