@@ -13,4 +13,4 @@ object Day25:
     (for
       key <- keys.map(heights); lock <- locks.map(heights)
       if key.zip(lock).forall((k, l) => k + l <= 5)
-    yield 1).size
+    yield ()).size
