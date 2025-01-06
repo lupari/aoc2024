@@ -5,5 +5,5 @@ class Test24 extends flatspec.AnyFlatSpec with matchers.should.Matchers:
 
   it should "calculate correct result" in {
     Day24.partOne() should be(60714423975686L)
-    //Day24.partTwo() should be(0)
+    Day24.partTwo() should be("cgh,frt,pmd,sps,tst,z05,z11,z23")
   }

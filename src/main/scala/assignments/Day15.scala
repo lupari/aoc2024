@@ -17,25 +17,23 @@ object Day15:
     else (g, robot)
 
   def move2(g: Grid[Char], robot: Point, dir: Point): (Grid[Char], Point) =
-    def helper(acc: Grid[Char], pos: Point): Option[Grid[Char]] =
-      acc(pos) match
-        case '.' => Some(acc)
-        case '#' => None
-        case '[' if dir.x == 0 =>
-          val pos2 = pos + dir
-          for
-            g2 <- helper(acc, pos2)
-            g3 <- helper(g2, pos2 + Point(1, 0))
-          yield g3
-            .updated(pos2, '[')
-            .updated(pos2 + Point(1, 0), ']')
-            .updated(pos, '.')
-            .updated(pos + Point(1, 0), '.')
-        case ']' if dir.x == 0 => helper(acc, pos - Point(1, 0))
-        case block @ ('[' | ']') if dir.y == 0 =>
-          val pos2 = pos + dir
-          for g2 <- helper(acc, pos2)
-          yield g2.updated(pos2, block).updated(pos, '.')
+    def helper(acc: Grid[Char], pos: Point): Option[Grid[Char]] = acc(pos) match
+      case '.' => Some(acc)
+      case '#' => None
+      case '[' if dir.x == 0 =>
+        val pos2 = pos + dir
+        for
+          g2 <- helper(acc, pos2)
+          g3 <- helper(g2, pos2 + Point(1, 0))
+        yield g3
+          .updated(pos2, '[')
+          .updated(pos2 + Point(1, 0), ']')
+          .updated(pos, '.')
+          .updated(pos + Point(1, 0), '.')
+      case ']' if dir.x == 0 => helper(acc, pos - Point(1, 0))
+      case block @ ('[' | ']') if dir.y == 0 =>
+        val pos2 = pos + dir
+        for g2 <- helper(acc, pos2) yield g2.updated(pos2, block).updated(pos, '.')
 
     val robot2 = robot + dir
     helper(g, robot2) match
@@ -53,13 +51,11 @@ object Day15:
   def partOne(): Int = coordinateSum(grid, 'O')(move1)
 
   def partTwo(): Int =
-    def transform(c: Char): Seq[Char] = c match
+    def grow(c: Char): Seq[Char] = c match
       case 'O' => Seq('[', ']')
       case '@' => Seq('@', '.')
       case _   => Seq(c, c)
 
-    val g2 = grid.flatMap((k, v) =>
-      transform(v).zipWithIndex.map((v2, i) => k.copy(x = k.x * 2 + i) -> v2)
-    )
-
+    val g2 =
+      grid.flatMap((k, v) => grow(v).zipWithIndex.map((v2, i) => k.copy(x = k.x * 2 + i) -> v2))
     coordinateSum(g2, '[')(move2)
